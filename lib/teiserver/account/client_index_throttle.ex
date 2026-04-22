@@ -5,7 +5,9 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   player_changes lists players that have changed (added, updated or removed!)
   """
   alias Phoenix.PubSub
+  alias Teiserver.Account.ClientIndexThrottle
   alias Teiserver.Client
+
   use GenServer
 
   @update_interval 2000
@@ -17,7 +19,7 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   end
 
   def handle_info(%{channel: "client_inout", event: :disconnect} = msg, state) do
-    {:noreply, %{state | new_clients: [msg.userid | state.new_clients]}}
+    {:noreply, %{state | removed_clients: [msg.userid | state.new_clients]}}
   end
 
   def handle_info(%{channel: "client_inout"}, state) do
@@ -71,7 +73,7 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   end
 
   def start_link(opts) do
-    GenServer.start_link(__MODULE__, opts[:data], [])
+    GenServer.start_link(ClientIndexThrottle, opts[:data], [])
   end
 
   def init(_opts) do
@@ -96,6 +98,6 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   end
 
   def tick do
-    Process.whereis(__MODULE__) |> send(:tick)
+    Process.whereis(ClientIndexThrottle) |> send(:tick)
   end
 end
