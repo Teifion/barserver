@@ -33,9 +33,8 @@ defmodule TeiserverWeb.ClientLive.Show do
 
     socket =
       socket
-      |> add_breadcrumb(name: "Teiserver", url: "/teiserver")
-      |> add_breadcrumb(name: "Admin", url: "/teiserver/admin")
-      |> add_breadcrumb(name: "Clients", url: "/teiserver/admin/client")
+      |> add_breadcrumb(name: "Teiserver", url: ~p"/")
+      |> add_breadcrumb(name: "Admin", url: ~p"/teiserver/admin")
       |> assign(:current_client, current_client)
       |> assign(:site_menu_active, "teiserver_user")
       |> assign(:view_colour, UserLib.colours())
@@ -83,7 +82,7 @@ defmodule TeiserverWeb.ClientLive.Show do
         else
           {:noreply,
            socket
-           |> redirect(to: ~p"/teiserver/admin/client")}
+           |> redirect(to: ~p"/teiserver/admin")}
         end
 
       false ->
@@ -205,13 +204,13 @@ defmodule TeiserverWeb.ClientLive.Show do
 
   def handle_event("force-reconnect", _event, socket) do
     Client.disconnect(socket.assigns[:id], "reconnect")
-    {:noreply, socket |> redirect(to: Routes.ts_admin_client_index_path(socket, :index))}
+    {:noreply, socket |> redirect(to: ~p"/teiserver/admin")}
   end
 
   def handle_event("force-flood", _event, socket) do
     CacheUser.set_flood_level(socket.assigns[:id], 100)
     Client.disconnect(socket.assigns[:id], "flood protection")
-    {:noreply, socket |> redirect(to: Routes.ts_admin_client_index_path(socket, :index))}
+    {:noreply, socket |> redirect(to: ~p"/teiserver/admin")}
   end
 
   # Join battle stuff

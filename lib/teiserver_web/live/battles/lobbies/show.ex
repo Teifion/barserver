@@ -15,14 +15,6 @@ defmodule TeiserverWeb.Battle.LobbyLive.Show do
   require Logger
   import Teiserver.Helper.NumberHelper, only: [int_parse: 1]
 
-  @extra_menu_content """
-    &nbsp;&nbsp;&nbsp;
-    <a href='/teiserver/admin/client' class="btn btn-outline-primary">
-      <i class="fa-solid fa-fw fa-plug"></i>
-      Clients
-    </a>
-  """
-
   @impl Phoenix.LiveView
   def mount(_params, session, socket) do
     socket =
@@ -32,11 +24,6 @@ defmodule TeiserverWeb.Battle.LobbyLive.Show do
     moderator = allow?(socket, "Moderator")
     server_perms = allow?(socket, "Server")
     tester_perms = allow?(socket, "Tester")
-
-    extra_content =
-      if moderator do
-        @extra_menu_content
-      end
 
     client = Account.get_client_by_id(socket.assigns[:current_user].id)
     friends = Account.list_friend_ids_of_user(socket.assigns[:current_user].id)
@@ -56,7 +43,6 @@ defmodule TeiserverWeb.Battle.LobbyLive.Show do
       |> assign(:site_menu_active, "teiserver_lobbies")
       |> assign(:view_colour, Lobby.colours())
       |> assign(:messages, [])
-      |> assign(:extra_menu_content, extra_content)
       |> assign(:consul_command, "")
       |> assign(:subbed, true)
       |> assign(:moderator, moderator)

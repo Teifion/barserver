@@ -129,7 +129,6 @@ defmodule Teiserver.Application do
         {Teiserver.HookServer, name: Teiserver.HookServer},
 
         # Liveview throttles
-        Teiserver.Account.ClientIndexThrottle,
         Teiserver.Battle.LobbyIndexThrottle,
         {DynamicSupervisor, strategy: :one_for_one, name: Teiserver.Throttles.Supervisor},
 

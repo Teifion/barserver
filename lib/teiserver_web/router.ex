@@ -82,6 +82,7 @@ defmodule TeiserverWeb.Router do
         {Teiserver.Account.AuthPlug, :ensure_authenticated}
       ] do
       live "/", HomeLive.Index, :index
+      live "/teiserver", HomeLive.Index, :index
     end
   end
 
@@ -466,7 +467,6 @@ defmodule TeiserverWeb.Router do
   scope "/teiserver/admin", TeiserverWeb.ClientLive, as: :ts_admin do
     pipe_through([:browser, :app_layout, :protected])
 
-    live("/client", Index, :index)
     live("/client/:id", Show, :show)
   end
 
