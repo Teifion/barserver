@@ -128,7 +128,7 @@ defmodule TeiserverWeb.Moderation.BanController do
 
       existing_ban != nil ->
         conn
-        |> redirect(to: Routes.moderation_ban_path(conn, :show, existing_ban.id))
+        |> redirect(to: ~p"/moderation/ban/#{existing_ban.id}")
 
       true ->
         matching_users =
@@ -212,7 +212,7 @@ defmodule TeiserverWeb.Moderation.BanController do
 
         conn
         |> put_flash(:info, "Ban created successfully.")
-        |> redirect(to: Routes.moderation_ban_path(conn, :index))
+        |> redirect(to: ~p"/moderation/ban")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         user = Account.get_user(ban_params["source_id"])
@@ -337,7 +337,7 @@ defmodule TeiserverWeb.Moderation.BanController do
 
         conn
         |> put_flash(:info, "Ban enabled.")
-        |> redirect(to: Routes.moderation_ban_path(conn, :index))
+        |> redirect(to: ~p"/moderation/ban")
     end
   end
 
@@ -351,7 +351,7 @@ defmodule TeiserverWeb.Moderation.BanController do
 
         conn
         |> put_flash(:info, "Ban disabled.")
-        |> redirect(to: Routes.moderation_ban_path(conn, :index))
+        |> redirect(to: ~p"/moderation/ban")
     end
   end
 
