@@ -76,7 +76,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
 
   def handle_call(:get_chobby_extra_data, _from, state) do
     keys =
-      ~w(lobby_policy_id gatekeeper minimum_rating_to_play maximum_rating_to_play minimum_rank_to_play maximum_rank_to_play minimum_uncertainty_to_play maximum_uncertainty_to_play minimum_skill_to_play maximum_skill_to_play welcome_message player_limit)a
+      ~w(gatekeeper minimum_rating_to_play maximum_rating_to_play minimum_rank_to_play maximum_rank_to_play minimum_uncertainty_to_play maximum_uncertainty_to_play minimum_skill_to_play maximum_skill_to_play welcome_message player_limit)a
 
     result =
       state
@@ -127,10 +127,6 @@ defmodule Teiserver.Coordinator.ConsulServer do
   # Doesn't do anything at this stage
   def handle_info(:startup, state) do
     {:noreply, state}
-  end
-
-  def handle_info({:set_lobby_policy_id, new_id}, state) do
-    {:noreply, %{state | lobby_policy_id: new_id}}
   end
 
   def handle_info(:recheck_membership, state) do
@@ -1374,7 +1370,6 @@ defmodule Teiserver.Coordinator.ConsulServer do
       coordinator_id: Coordinator.get_coordinator_userid(),
       lobby_id: lobby_id,
       host_id: founder_id,
-      lobby_policy_id: nil,
       gatekeeper: "default",
       minimum_rating_to_play: 0,
       maximum_rating_to_play: 1000,

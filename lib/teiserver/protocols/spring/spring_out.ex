@@ -17,7 +17,6 @@ defmodule Teiserver.Protocols.SpringOut do
   alias Teiserver.Lobby
   alias Teiserver.Protocols.Spring
   alias Teiserver.Protocols.Spring.BattleOut
-  alias Teiserver.Protocols.Spring.LobbyPolicyOut
   alias Teiserver.Protocols.Spring.PartyOut
   alias Teiserver.Protocols.Spring.SystemOut
   alias Teiserver.Protocols.Spring.UserOut
@@ -46,7 +45,6 @@ defmodule Teiserver.Protocols.SpringOut do
     msg =
       case namespace do
         :battle -> BattleOut.do_reply(reply_cmd, data, state)
-        :lobby_policy -> LobbyPolicyOut.do_reply(reply_cmd, data, state)
         :user -> UserOut.do_reply(reply_cmd, data, state)
         :system -> SystemOut.do_reply(reply_cmd, data, state)
         :spring -> do_reply(reply_cmd, data)
