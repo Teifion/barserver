@@ -17,11 +17,7 @@ defmodule TeiserverWeb.Live.ClientTest do
       |> GeneralTestLib.conn_setup()
       |> TeiserverTestLib.conn_setup()
 
-    {:ok, throttle_pid} = ClientIndexThrottle.start_link(data: %{})
-
-    on_exit(fn ->
-      Process.exit(throttle_pid, :normal)
-    end)
+    throttle_pid = start_link_supervised!(ClientIndexThrottle)
 
     {:ok, [throttle_pid: throttle_pid] ++ setup_result}
   end
