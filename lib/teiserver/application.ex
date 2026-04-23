@@ -183,9 +183,9 @@ defmodule Teiserver.Application do
     opts = [strategy: :one_for_one, name: Teiserver.Supervisor]
     start_result = Supervisor.start_link(children, opts)
 
-    # We use a logger.error to ensure something appears even on the error logs
-    # and we can be sure they're being written to
-    Logger.error("Teiserver.Supervisor start result: #{Kernel.inspect(start_result)}")
+    # If the server seems to not start up we can check the info log to see
+    # if this is present
+    Logger.info("Teiserver.Supervisor start result: #{Kernel.inspect(start_result)}")
 
     startup_sub_functions(start_result)
 

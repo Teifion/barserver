@@ -87,7 +87,6 @@ defmodule Teiserver.Battle.MatchMonitorServer do
   def handle_info({:new_message, from_id, "autohosts", "* Launching game..."}, state) do
     case Client.get_client_by_id(from_id) do
       nil ->
-        Logger.warning("Cannot start match: client #{from_id} not found")
         {:noreply, state}
 
       client ->
