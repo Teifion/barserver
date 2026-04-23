@@ -195,7 +195,7 @@ policy_bsname = Teiserver.Game.LobbyPolicyLib.colours() %>
             </td>
             <td>
               <.link
-                navigate={Routes.ts_battle_lobby_show_path(@socket, :show, lobby.id)}
+                navigate={~p"/battle/lobbies/show/#{lobby.id}"}
                 class={"btn btn-sm btn-outline-#{lobby_bsname}"}
               >
                 Show

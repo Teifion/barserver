@@ -84,7 +84,7 @@ defmodule TeiserverWeb.Admin.LobbyPolicyController do
 
         conn
         |> put_flash(:info, "Lobby policy created successfully.")
-        |> redirect(to: Routes.admin_lobby_policy_path(conn, :index))
+        |> redirect(to: ~p"/admin/lobby_policies")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
@@ -128,7 +128,7 @@ defmodule TeiserverWeb.Admin.LobbyPolicyController do
 
         conn
         |> put_flash(:info, "Lobby policy updated successfully.")
-        |> redirect(to: Routes.admin_lobby_policy_path(conn, :index))
+        |> redirect(to: ~p"/admin/lobby_policies")
 
       {:error, %Ecto.Changeset{} = changeset} ->
         conn
@@ -150,6 +150,6 @@ defmodule TeiserverWeb.Admin.LobbyPolicyController do
 
     conn
     |> put_flash(:info, "Lobby policy deleted successfully.")
-    |> redirect(to: Routes.admin_lobby_policy_path(conn, :index))
+    |> redirect(to: ~p"/admin/lobby_policies")
   end
 end

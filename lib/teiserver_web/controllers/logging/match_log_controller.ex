@@ -137,7 +137,7 @@ defmodule TeiserverWeb.Logging.MatchLogController do
 
     if today == "#{month}/#{year}" do
       conn
-      |> redirect(to: Routes.logging_match_log_path(conn, :month_metrics_today))
+      |> redirect(to: ~p"/logging/match/month_metrics/today")
     else
       log = Logging.get_match_month_log({year, month})
 
