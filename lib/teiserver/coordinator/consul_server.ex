@@ -199,7 +199,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
     new_approved = [userid | state.approved_users] |> Enum.uniq()
 
     username = Account.get_username(userid)
-    ChatLib.persist_system_message("#{username} joined the lobby", state.lobby_id)
+    maybe_persist_system_message("#{username} joined the lobby", state.lobby_id)
 
     {:noreply,
      %{
@@ -211,7 +211,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
 
   def handle_info({:user_left, userid}, state) do
     username = Account.get_username(userid)
-    ChatLib.persist_system_message("#{username} left the lobby", state.lobby_id)
+    maybe_persist_system_message("#{username} left the lobby", state.lobby_id)
 
     player_count_changed(state)
 
@@ -1435,6 +1435,14 @@ defmodule Teiserver.Coordinator.ConsulServer do
 
     %{state | join_queue: join_queue, low_priority_join_queue: low_priority_join_queue}
     |> queue_size_changed()
+  end
+
+  # In tests this can lead to generating foreign key issues so we don't do this in tests
+  # but the function we are wrapping is tested elsewhere
+  defp maybe_persist_system_message(message, lobby_id) do
+    if not Application.get_env(:teiserver, Teiserver)[:test_mode] do
+      ChatLib.persist_system_message(message, lobby_id)
+    end
   end
 
   @spec get_queue(map()) :: [T.userid()]
