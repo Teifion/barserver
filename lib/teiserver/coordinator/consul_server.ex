@@ -580,7 +580,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
     user = CacheUser.get_user_by_id(userid)
 
     cond do
-      Auth.moderator?(user) ->
+      Auth.admin_or_moderator?(user) ->
         :ok
 
       Enum.count(new_user_times) >= state.ring_limit_count ->
@@ -645,7 +645,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
       |> String.downcase()
 
     is_boss = Enum.member?(state.host_bosses, userid)
-    is_moderator = Auth.moderator?(userid)
+    is_admin_or_moderator = Auth.admin_or_moderator?(userid)
 
     # If it's CV then strip that out!
     [cmd | args] = String.split(trimmed_msg, " ")
@@ -665,7 +665,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
     case {cmd, args} do
       {"boss", _boss_args} ->
         if Enum.member?(state.locks, :boss) do
-          if not is_boss and not is_moderator do
+          if not is_boss and not is_admin_or_moderator do
             spawn(fn ->
               :timer.sleep(300)
               ChatLib.say(userid, "!ev", state.lobby_id)
@@ -871,7 +871,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
       not Enum.empty?(client.queues) ->
         false
 
-      Auth.moderator?(user) ->
+      Auth.admin_or_moderator?(user) ->
         true
 
       state.ranked == false and
@@ -975,7 +975,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
         {false,
          "Awaiting acknowledgement of your warning - check chat from @Coordinator and follow instructions there. Pay attention to spelling."}
 
-      client.moderator ->
+      Auth.admin_or_moderator?(userid) ->
         {true, :override_approve}
 
       ban_state == :banned ->

@@ -285,7 +285,7 @@ defmodule Teiserver.Coordinator.CoordinatorCommands do
         ]
 
         mod_parts =
-          if Auth.moderator?(sender) do
+          if Auth.admin_or_moderator?(sender) do
             # player_hours = Map.get(stats, "player_minutes", 0)/60 |> round
             # spectator_hours = Map.get(stats, "spectator_minutes", 0)/60 |> round
             # rank_time = CacheUser.rank_time(user.id)
@@ -410,8 +410,8 @@ defmodule Teiserver.Coordinator.CoordinatorCommands do
         )
 
       user ->
-        if Auth.moderator?(user) do
-          Coordinator.send_to_user(senderid, "You cannot block moderators.")
+        if Auth.admin_or_moderator?(user) do
+          Coordinator.send_to_user(senderid, "You cannot mute this user.")
         else
           case Account.ignore_user(senderid, user.id) do
             {:ok, _result} ->
