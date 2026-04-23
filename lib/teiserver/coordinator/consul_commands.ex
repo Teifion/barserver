@@ -1525,11 +1525,6 @@ defmodule Teiserver.Coordinator.ConsulCommands do
 
     {check_name_result, check_name_msg} = LobbyRestrictions.check_lobby_name(stripped_name, state)
 
-    starts_with_lobby_policy =
-      new_name
-      |> String.downcase()
-      |> String.starts_with?("preset")
-
     cond do
       new_name == "" ->
         Battle.rename_lobby(state.lobby_id, lobby.base_name, nil)
@@ -1539,32 +1534,6 @@ defmodule Teiserver.Coordinator.ConsulCommands do
         Lobby.sayex(
           state.coordinator_id,
           "That lobby name been rejected. Please be aware that misuse of the lobby naming system can cause your chat privileges to be revoked.",
-          state.lobby_id
-        )
-
-        state
-
-      state.lobby_policy_id != nil ->
-        Lobby.sayex(
-          state.coordinator_id,
-          "This is a server managed lobby, you cannot rename it",
-          state.lobby_id
-        )
-
-        state
-
-      # String.length(new_name) > 20 ->
-      #   Lobby.sayex(
-      #     state.coordinator_id,
-      #     "That name (#{new_name}) is too long",
-      #     state.lobby_id
-      #   )
-      #   state
-
-      lobby.lobby_policy_id && starts_with_lobby_policy ->
-        Lobby.sayex(
-          state.coordinator_id,
-          "This is not a server managed lobby, you cannot use that name",
           state.lobby_id
         )
 

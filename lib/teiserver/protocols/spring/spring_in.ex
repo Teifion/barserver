@@ -22,7 +22,6 @@ defmodule Teiserver.Protocols.SpringIn do
   alias Teiserver.Protocols.Spring
   alias Teiserver.Protocols.Spring.AuthIn
   alias Teiserver.Protocols.Spring.BattleIn
-  alias Teiserver.Protocols.Spring.LobbyPolicyIn
   alias Teiserver.Protocols.Spring.PartyIn
   alias Teiserver.Protocols.Spring.SystemIn
   alias Teiserver.Protocols.Spring.TelemetryIn
@@ -188,10 +187,6 @@ defmodule Teiserver.Protocols.SpringIn do
 
   defp do_handle("c.battle." <> cmd, data, msg_id, state) do
     BattleIn.do_handle(cmd, data, msg_id, state)
-  end
-
-  defp do_handle("c.lobby_policy." <> cmd, data, msg_id, state) do
-    LobbyPolicyIn.do_handle(cmd, data, msg_id, state)
   end
 
   defp do_handle("c.user." <> cmd, data, msg_id, state) do

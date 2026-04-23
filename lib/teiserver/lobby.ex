@@ -104,9 +104,6 @@ defmodule Teiserver.Lobby do
         display_name: lobby.name,
         teaser: "",
 
-        # Used to indicate the lobby is subject to a lobby policy
-        lobby_policy_id: nil,
-
         # Meta data
         silence: false,
         in_progress: false,
