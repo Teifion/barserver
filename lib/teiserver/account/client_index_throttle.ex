@@ -5,7 +5,6 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   player_changes lists players that have changed (added, updated or removed!)
   """
   alias Phoenix.PubSub
-  alias Teiserver.Account.ClientIndexThrottle
   alias Teiserver.Client
 
   use GenServer
@@ -73,7 +72,7 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   end
 
   def start_link(opts) do
-    GenServer.start_link(ClientIndexThrottle, opts[:data], [])
+    GenServer.start_link(__MODULE__, opts[:data], [])
   end
 
   def init(_opts) do
@@ -85,7 +84,7 @@ defmodule Teiserver.Account.ClientIndexThrottle do
 
     Horde.Registry.register(
       Teiserver.ThrottleRegistry,
-      "ClientIndexThrottle",
+      "__MODULE__",
       :index
     )
 
@@ -98,6 +97,6 @@ defmodule Teiserver.Account.ClientIndexThrottle do
   end
 
   def tick do
-    Process.whereis(ClientIndexThrottle) |> send(:tick)
+    Process.whereis(__MODULE__) |> send(:tick)
   end
 end
