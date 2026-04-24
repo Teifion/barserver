@@ -580,7 +580,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
     user = CacheUser.get_user_by_id(userid)
 
     cond do
-      Auth.admin_or_moderator?(user) ->
+      Auth.admin?(user) or Auth.moderator?(user) ->
         :ok
 
       Enum.count(new_user_times) >= state.ring_limit_count ->
@@ -645,7 +645,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
       |> String.downcase()
 
     is_boss = Enum.member?(state.host_bosses, userid)
-    is_admin_or_moderator = Auth.admin_or_moderator?(userid)
+    is_admin_or_moderator = Auth.admin?(userid) or Auth.moderator?(userid)
 
     # If it's CV then strip that out!
     [cmd | args] = String.split(trimmed_msg, " ")
@@ -871,7 +871,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
       not Enum.empty?(client.queues) ->
         false
 
-      Auth.admin_or_moderator?(user) ->
+      Auth.admin?(user) or Auth.moderator?(user) ->
         true
 
       state.ranked == false and
@@ -975,7 +975,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
         {false,
          "Awaiting acknowledgement of your warning - check chat from @Coordinator and follow instructions there. Pay attention to spelling."}
 
-      Auth.admin_or_moderator?(userid) ->
+      Auth.admin?(userid) or Auth.moderator?(userid) ->
         {true, :override_approve}
 
       ban_state == :banned ->
@@ -1438,7 +1438,12 @@ defmodule Teiserver.Coordinator.ConsulServer do
   end
 
   # In tests this can lead to generating foreign key issues so we don't do this in tests
-  # but the function we are wrapping is tested elsewhere
+  # but the function we are wrapping is tested elsewhere.
+  # The error happens because when a test is closed down the relevant match
+  # entry from the database is removed and we still try to insert this generating:
+  # ** (Ecto.ConstraintError) constraint error when attempting to insert struct:
+  #
+  #   * "teiserver_lobby_messages_user_id_fkey" (foreign_key_constraint)
   defp maybe_persist_system_message(message, lobby_id) do
     if not Application.get_env(:teiserver, Teiserver)[:test_mode] do
       ChatLib.persist_system_message(message, lobby_id)

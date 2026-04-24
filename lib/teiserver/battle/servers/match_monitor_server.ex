@@ -167,7 +167,7 @@ defmodule Teiserver.Battle.MatchMonitorServer do
   end
 
   def handle_info({:direct_message, from_id, "broken_connection " <> username}, state) do
-    if Auth.is_bot?(from_id) or Auth.admin_or_moderator?(from_id) do
+    if Auth.is_bot?(from_id) or Auth.admin?(from_id) or Auth.moderator?(from_id) do
       user = Account.get_user_by_name(username)
 
       if user do

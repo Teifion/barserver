@@ -402,7 +402,7 @@ defmodule Teiserver.Coordinator.ConsulCommands do
 
     if balance do
       admin_or_moderator_messages =
-        if Auth.admin_or_moderator?(senderid) do
+        if Auth.admin?(senderid) or Auth.moderator?(senderid) do
           time_taken =
             cond do
               balance.time_taken < 1000 ->
@@ -601,7 +601,7 @@ defmodule Teiserver.Coordinator.ConsulCommands do
       |> String.downcase()
       |> String.trim()
 
-    is_admin_or_moderator = Auth.admin_or_moderator?(senderid)
+    is_admin_or_moderator = Auth.admin?(senderid) or Auth.moderator?(senderid)
 
     allowed_choices = BalanceLib.get_allowed_algorithms(is_admin_or_moderator)
 

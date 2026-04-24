@@ -43,9 +43,6 @@ defmodule Teiserver.Account.Auth do
   def is_bot?(%{roles: roles}), do: Enum.member?(roles, "Bot")
   def is_bot?(_user), do: false
 
-  @spec admin_or_moderator?(T.userid() | T.user()) :: boolean()
-  def admin_or_moderator?(u), do: moderator?(u) or admin?(u)
-
   @spec moderator?(T.userid() | T.user()) :: boolean()
   def moderator?(nil), do: false
 
