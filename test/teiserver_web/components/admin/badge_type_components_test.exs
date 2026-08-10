@@ -11,7 +11,7 @@ defmodule TeiserverWeb.Components.Admin.BadgeTypeComponentsTest do
           active: "index"
         })
 
-      # The links we expect to see
+      # The two links we expect to see
       assert html =~ "/teiserver/admin/badge_types"
       assert html =~ "/teiserver/admin/badge_types/new"
     end

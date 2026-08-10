@@ -7,7 +7,7 @@ defmodule TeiserverWeb.Components.Admin.BadgeTypeComponents do
   import TeiserverWeb.NavComponents, only: [section_menu_button: 1]
 
   @doc """
-  <TeiserverWeb.Components.Admin.BadgeTypeComponents.section_menu active={active} colour={} />
+  <TeiserverWeb.Components.Admin.BadgeTypeComponents.section_menu active={active} bsname={} />
   """
   attr :colour, :string, required: true
   attr :active, :string, required: true
