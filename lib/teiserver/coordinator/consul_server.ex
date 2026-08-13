@@ -452,6 +452,9 @@ defmodule Teiserver.Coordinator.ConsulServer do
       ) do
     LobbyLib.cast_lobby(state.lobby_id, :refresh_name)
 
+    # This may be sent as a number or a string, we turn it into a string to be safe
+    ranked = "#{ranked}"
+
     if ranked == "0" do
       new_state =
         if Config.get_site_config_cache("lobby.Unranked lobby restrictions") == false do
@@ -471,7 +474,7 @@ defmodule Teiserver.Coordinator.ConsulServer do
       if state.quantum_mode? do
         ChatLib.say(
           state.coordinator_id,
-          "Ranked mode has been enabled, we have disabled Quantum mode as a result.",
+          "Ranked mode has been enabled, we have disabled Quantum mode as a result. (case 1)",
           state.lobby_id
         )
       end
@@ -485,14 +488,14 @@ defmodule Teiserver.Coordinator.ConsulServer do
         %{
           channel: "teiserver_lobby_updates",
           event: :remove_modoptions,
-          options: %{"game/modoptions/ranked_game" => _ranked}
+          options: %{"game/modoptions/ranked_game" => ranked}
         },
         state
       ) do
     if state.quantum_mode? do
       ChatLib.say(
         state.coordinator_id,
-        "Ranked mode has been enabled, we have disabled Quantum mode as a result.",
+        "Ranked mode has been enabled, we have disabled Quantum mode as a result. (case 2, value: '#{ranked}')",
         state.lobby_id
       )
     end
