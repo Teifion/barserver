@@ -57,6 +57,12 @@ defmodule Teiserver.Moderation.AntiAbuseRecordQueries do
       where: anti_abuse_records.restored_by_id == ^id
   end
 
+  @spec where_identifier(t(), String.t(), String.t()) :: t()
+  def where_identifier(query, identifier_type, identifier) do
+    from anti_abuse_records in query,
+      where: fragment("? ->> ? = ?", anti_abuse_records.hashes, ^identifier_type, ^identifier)
+  end
+
   @spec load_user(t()) :: t()
   def load_user(query) do
     from anti_abuse_records in query,
