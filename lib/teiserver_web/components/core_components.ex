@@ -63,7 +63,7 @@ defmodule TeiserverWeb.CoreComponents do
               phx-window-keydown={hide_modal(@on_cancel, @id)}
               phx-key="escape"
               phx-click-away={hide_modal(@on_cancel, @id)}
-              class="hidden relative rounded-2xl bg-secondary p-4 p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
+              class="hidden relative rounded-2xl bg-base-100 p-4 p-14 shadow-lg shadow-zinc-700/10 ring-1 ring-zinc-700/10 transition"
             >
               <div class="absolute top-6 right-5">
                 <button
@@ -188,7 +188,7 @@ defmodule TeiserverWeb.CoreComponents do
 
   def flash_group(assigns) do
     ~H"""
-    <div aria-live="polite" aria-atomic="true" class="position-relative">
+    <div aria-live="polite" aria-atomic="true" class="position-relative h-1">
       <div class="toast-container top-0 end-0 p-3">
         <.flash id="flash-info" kind={:info} title="Information" role="alert" flash={@flash} />
         <.flash id="flash-success" kind={:success} title="Success!" role="alert" flash={@flash} />

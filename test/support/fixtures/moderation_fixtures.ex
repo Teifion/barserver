@@ -15,7 +15,7 @@ defmodule Teiserver.ModerationFixtures do
     {:ok, banned_domain} =
       Map.merge(
         %{
-          domain: "some domain"
+          domain: "some domain #{:rand.uniform(999_999)}"
         },
         attrs
       )
@@ -31,7 +31,8 @@ defmodule Teiserver.ModerationFixtures do
     {:ok, banned_ip} =
       Map.merge(
         %{
-          cidr: "192.168.0.1/24"
+          cidr:
+            "#{:rand.uniform(255)}.#{:rand.uniform(255)}.#{:rand.uniform(255)}.#{:rand.uniform(255)}/#{:rand.uniform(31) + 1}"
         },
         attrs
       )

@@ -1,9 +1,11 @@
+<AntiAbuseRecordComponents.section_menu active="list" scope={@scope} />
+
 <h1 class="text-2xl font-bold">
   Anti-abuse records
 </h1>
-<div class="text-sm leading-6 text-neutral">{@record_count} records found</div>
+<div class="heading-subtitle">{@record_count} records found</div>
 
-<TeiserverWeb.Admin.AntiAbuseRecordComponents.search_form params={@search} />
+<AntiAbuseRecordComponents.search_form params={@search} changed?={@search_changed?} />
 
 <.table
   id="anti-abuse-records-table"

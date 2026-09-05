@@ -1050,6 +1050,8 @@ defmodule Teiserver.Moderation do
   """
   def get_banned_ip!(id), do: Repo.get!(BannedIP, id)
 
+  def get_banned_ip(id), do: Repo.get(BannedIP, id)
+
   @doc """
   Creates a banned_ip.
 

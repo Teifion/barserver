@@ -6,7 +6,7 @@ defmodule TeiserverWeb.Components.Moderation.ActionComponents do
   alias Teiserver.Account.Scope
 
   use TeiserverWeb, :component
-  import TeiserverWeb.NavComponents, only: [section_menu_button: 1, tw_section_menu_button: 1]
+  import TeiserverWeb.NavComponents, only: [section_menu_button: 1, section_menu_link: 1]
 
   @doc """
   <TeiserverWeb.Components.Moderation.ActionComponents.section_menu active={active} colour={} />
@@ -69,49 +69,51 @@ defmodule TeiserverWeb.Components.Moderation.ActionComponents do
 
   def tw_section_menu(assigns) do
     ~H"""
-    <div role="tablist" class="tabs tabs-box">
-      <.tw_section_menu_button
-        icon={StylingHelper.icon(:list)}
-        url={~p"/moderation/action"}
-        active={@active == "index"}
-      >
-        List
-      </.tw_section_menu_button>
+    <div class="section-menu-bar">
+      <ul class="menu menu-horizontal">
+        <.section_menu_link
+          icon={StylingHelper.icon(:list)}
+          url={~p"/moderation/action"}
+          active={@active == "index"}
+        >
+          List
+        </.section_menu_link>
 
-      <.tw_section_menu_button
-        icon={StylingHelper.icon(:search)}
-        url={~p"/moderation/action/search"}
-        active={@active == "search"}
-      >
-        Search
-      </.tw_section_menu_button>
+        <.section_menu_link
+          icon={StylingHelper.icon(:search)}
+          url={~p"/moderation/action/search"}
+          active={@active == "search"}
+        >
+          Search
+        </.section_menu_link>
 
-      <.tw_section_menu_button
-        :if={@active == "show"}
-        icon={StylingHelper.icon(:show)}
-        url="#"
-        active={true}
-      >
-        Show
-      </.tw_section_menu_button>
+        <.section_menu_link
+          :if={@active == "show"}
+          icon={StylingHelper.icon(:show)}
+          url="#"
+          active={true}
+        >
+          Show
+        </.section_menu_link>
 
-      <.tw_section_menu_button
-        :if={@active == "edit"}
-        icon={StylingHelper.icon(:edit)}
-        url="#"
-        active={true}
-      >
-        Edit
-      </.tw_section_menu_button>
+        <.section_menu_link
+          :if={@active == "edit"}
+          icon={StylingHelper.icon(:edit)}
+          url="#"
+          active={true}
+        >
+          Edit
+        </.section_menu_link>
 
-      <.tw_section_menu_button
-        :if={@active == "smurf-link"}
-        active={true}
-        icon="fa-solid fa-code-compare"
-        url="#"
-      >
-        Smurf link
-      </.tw_section_menu_button>
+        <.section_menu_link
+          :if={@active == "smurf-link"}
+          active={true}
+          icon="fa-solid fa-code-compare"
+          url="#"
+        >
+          Smurf link
+        </.section_menu_link>
+      </ul>
     </div>
     """
   end

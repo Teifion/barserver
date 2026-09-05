@@ -1,4 +1,4 @@
-defmodule TeiserverWeb.Live.Moderation.ActionLive.SmurfLinkTest do
+defmodule TeiserverWeb.Live.ModerationLive.Action.SmurfLinkTest do
   alias Teiserver.Account
   alias Teiserver.Helpers.GeneralTestLib
   alias Teiserver.TeiserverTestLib

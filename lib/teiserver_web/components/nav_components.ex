@@ -489,6 +489,30 @@ defmodule TeiserverWeb.NavComponents do
   end
 
   @doc """
+  <.section_menu_link bsname={bsname} icon={lib} active={true/false} url={url}>
+    Text goes here
+  </.section_menu_link>
+  """
+  attr :icon, :string, default: nil
+  attr :url, :string, required: true
+  attr :active, :boolean, default: false
+  slot :inner_block, required: true
+
+  def section_menu_link(assigns) do
+    assigns =
+      assigns
+      |> assign(:active_class, if(assigns[:active], do: "active"))
+
+    ~H"""
+    <li>
+      <a href={@url} class={["tab", @active_class]}>
+        <Fontawesome.icon :if={@icon} icon={@icon} style="solid" /> &nbsp; {render_slot(@inner_block)}
+      </a>
+    </li>
+    """
+  end
+
+  @doc """
   <.breadcrumb_trail trails={@breadcrumb_trails} />
   """
   def breadcrumb_trail(assigns) do

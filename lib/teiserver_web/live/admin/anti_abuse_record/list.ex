@@ -4,6 +4,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.List do
   alias Teiserver.Moderation
   alias Teiserver.Moderation.AntiAbuseRecordQueries
   alias Teiserver.Repo
+  alias TeiserverWeb.Admin.AntiAbuseRecordComponents
 
   use TeiserverWeb, :live_view
 
@@ -30,7 +31,14 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.List do
 
   def mount(_params, _session, %Socket{} = socket) do
     socket
-    |> assign(records: [], record_count: 0, page: 0, page_count: 1, search: %{})
+    |> assign(
+      records: [],
+      record_count: 0,
+      page: 0,
+      page_count: 1,
+      search: %{},
+      search_changed?: false
+    )
     |> ok()
   end
 
@@ -46,6 +54,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.List do
 
   def handle_event("validate-search", _params, %Socket{} = socket) do
     socket
+    |> assign(search_changed?: true)
     |> noreply()
   end
 
@@ -57,7 +66,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.List do
     set_user_config(socket, @page_size_config_key, params["page_size"])
 
     socket
-    |> assign(search: new_search)
+    |> assign(search: new_search, search_changed?: false, page: 0)
     |> get_record_count()
     |> get_records()
     |> noreply()
@@ -76,21 +85,23 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.List do
       params
       |> convert_search_params()
       |> Map.merge(%{
-        "page_size" => get_user_config_cache(socket, @page_size_config_key)
+        "page_size" => get_user_config_cache(socket, @page_size_config_key),
+        # Force refresh of form
+        "_random" => :rand.uniform()
       })
       |> Map.reject(fn {_k, v} -> is_nil(v) end)
 
     socket
-    |> assign(search: params)
+    |> assign(search: params, search_changed?: false)
   end
 
   defp convert_search_params(params) do
     %{
       "user_id" => maybe_to_integer(params["user_id"]),
-      "page_size" => min(maybe_to_integer(params["page_size"]), @max_page_size),
       "clean?" => boolean_from_form(params["clean?"]),
       "restored?" => boolean_from_form(params["restored?"]),
-      "restored_by_id" => params["restored_by_id"]
+      "restored_by_id" => params["restored_by_id"],
+      "page_size" => min(maybe_to_integer(params["page_size"]), @max_page_size)
     }
   end
 

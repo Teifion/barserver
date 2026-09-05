@@ -155,13 +155,13 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.ListTest do
         |> render()
         |> table_to_map()
 
-      # By default we show 25 (set by the user config)
-      assert Enum.count(table.rows) == 25
+      # By default we show 50 (set by the user config)
+      assert Enum.count(table.rows) == 41
 
-      # What if we update the search to show more results?
+      # What if we update the search to show fewer results?
       live
       |> form("#anti-abuse-record-search-form")
-      |> render_submit(%{"page_size" => "50"})
+      |> render_submit(%{"page_size" => "25"})
 
       # Should now be 41
       {:ok, table} =
@@ -170,8 +170,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.ListTest do
         |> render()
         |> table_to_map()
 
-      # By default we show 25 (set by the user config)
-      assert Enum.count(table.rows) == 41
+      assert Enum.count(table.rows) == 25
 
       # But then we limit what we're searching for
       live

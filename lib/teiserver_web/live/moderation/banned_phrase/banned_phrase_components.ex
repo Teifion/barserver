@@ -1,7 +1,6 @@
-defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
+defmodule TeiserverWeb.ModerationLive.BannedPhraseComponents do
   @moduledoc false
   alias Teiserver.Account.Scope
-  alias TeiserverWeb.LiveComponents.UserPicker
 
   use TeiserverWeb, :component
 
@@ -9,7 +8,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
   import TeiserverWeb.NavComponents, only: [section_menu_link: 1]
 
   @doc """
-  <TeiserverWeb.Admin.AntiAbuseRecordComponents.search_form
+  <TeiserverWeb.Moderation.BannedPhraseComponents.search_form
     :if={assigns[:search]}
     params={@search}
   />
@@ -33,45 +32,25 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
     ~H"""
     <.simple_form
       for={@form}
-      id="anti-abuse-record-search-form"
       phx-change="validate-search"
       phx-submit="update-search"
+      id="banned_phrase-search-form"
     >
       <div class="grid grid-flow-row-dense grid-cols-3">
         <div class="m-2">
-          <div class="fieldset">
-            <.live_component
-              module={UserPicker}
-              id="restored_by_id-user-picker"
-              field={@form[:restored_by_id]}
-              label="Restored by:"
-            />
-          </div>
-        </div>
-
-        <div class="m-2">
           <.input_tw
             type="text"
-            field={@form[:user_id]}
-            label="User ID"
+            field={@form[:phrase]}
+            label="Phrase"
           />
         </div>
 
         <div class="m-2">
           <.input_tw
             type="select"
-            field={@form[:clean?]}
-            label="Clean?"
-            options={[{"Any", nil}, {"Clean", true}, {"Unclean", false}]}
-          />
-        </div>
-
-        <div class="m-2">
-          <.input_tw
-            type="select"
-            field={@form[:restored?]}
-            label="Restored?"
-            options={[{"Any", nil}, {"Restored", true}, {"Not restored", false}]}
+            field={@form[:order_by]}
+            label="Order by"
+            options={["Newest first", "Oldest first", "Alphabetical (A-Z)", "Alphabetical (Z-A)"]}
           />
         </div>
 
@@ -98,12 +77,12 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
   end
 
   @doc """
-  <AntiAbuseRecordComponents.section_menu
+  <BannedPhraseComponents.section_menu
     active="some-link"
     scope={@scope}
   />
 
-  <AntiAbuseRecordComponents.section_menu
+  <BannedPhraseComponents.section_menu
     active="some-link"
     scope={@scope}
   >
@@ -113,7 +92,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
     <:right_links>
       <li>Link goes here</li>
     </:right_links>
-  </AntiAbuseRecordComponents.section_menu>
+  </BannedPhraseComponents.section_menu>
   """
   attr :scope, Scope, required: true
   attr :active, :string, required: true
@@ -126,7 +105,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordComponents do
       <ul class="menu menu-horizontal">
         <.section_menu_link
           icon={StylingHelper.icon(:list)}
-          url={~p"/admin/anti-abuse-records/list"}
+          url={~p"/moderation/banned_phrases"}
           active={@active == "list"}
         >
           List

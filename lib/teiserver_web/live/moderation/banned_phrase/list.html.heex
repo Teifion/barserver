@@ -1,15 +1,23 @@
+<BannedPhraseComponents.section_menu active="list" scope={@scope}>
+  <.link patch={~p"/moderation/banned_phrases/new"} class="btn btn-primary btn-sm">
+    <Fontawesome.icon icon="plus" style="regular" /> New Banned Phrase
+  </.link>
+</BannedPhraseComponents.section_menu>
+
 <.header>
-  Listing banned phrases
+  Listing Banned Phrases
   <:actions>
-    <.link patch={~p"/moderation/banned_phrases/new"}>
-      <.button>New banned phrase</.button>
-    </.link>
+    <.link patch={~p"/moderation/banned_phrases/new"}></.link>
   </:actions>
 </.header>
+<div class="heading-subtitle">{@banned_phrase_count} Banned Phrases found</div>
+
+<BannedPhraseComponents.search_form params={@search} changed?={@search_changed?} />
 
 <.table
-  id="banned_phrases"
+  id="banned_phrases-table"
   rows={@streams.banned_phrases}
+  table_class="table-sm table-zebra mt-4"
   row_click={
     fn {_id, banned_phrase} -> JS.navigate(~p"/moderation/banned_phrases/#{banned_phrase}") end
   }
@@ -24,21 +32,30 @@
     </div>
     <.link
       patch={~p"/moderation/banned_phrases/#{banned_phrase}/edit"}
-      class="btn btn-secondary btn-sm me-2"
+      class="btn btn-secondary btn-outline btn-sm me-2"
     >
-      Edit
+      <Fontawesome.icon icon="wrench" style="regular" /> Edit
     </.link>
   </:action>
-  <:action :let={{id, banned_phrase}}>
+  <:action :let={{_id, banned_phrase}}>
     <.link
-      phx-click={JS.push("delete", value: %{id: banned_phrase.id}) |> hide("##{id}")}
+      phx-click={
+        JS.push("delete", value: %{id: banned_phrase.id}) |> hide("##{banned_phrase.id}")
+      }
       data-confirm="Are you sure?"
-      class="btn btn-danger btn-sm"
+      class="btn btn-error btn-outline btn-sm"
     >
-      Delete
+      <Fontawesome.icon icon="trash" style="regular" /> Delete
     </.link>
   </:action>
 </.table>
+
+<div class="grid place-items-center mt-4">
+  <TeiserverWeb.PaginationComponents.tw_pagination
+    page={@page}
+    page_count={@page_count}
+  />
+</div>
 
 <.back navigate={~p"/moderation"}>Back to moderation</.back>
 
