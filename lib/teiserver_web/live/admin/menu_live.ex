@@ -11,7 +11,7 @@ defmodule TeiserverWeb.Admin.MenuLive do
   @impl Phoenix.LiveView
   def render(assigns) do
     ~H"""
-    <div class="grid grid-flow-row-dense grid-cols-8">
+    <div class="menu-grid">
       <.menu_page_link
         :if={allow?(@scope, "Server")}
         icon="fa-gauge"
