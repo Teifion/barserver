@@ -32,7 +32,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.ListTest do
       audit_log = LoggingTestLib.get_most_recent_audit_log_for_user(kw[:user].id)
       assert audit_log.action == "Anti-abuse record access"
       assert audit_log.details == %{"action" => "list", "id" => nil}
-      assert audit_log.ip == "127.0.0.1"
+      assert audit_log.ip == nil
     end
   end
 
@@ -54,7 +54,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.ListTest do
       audit_log = LoggingTestLib.get_most_recent_audit_log_for_user(kw[:user].id)
       assert audit_log.action == "Anti-abuse record access"
       assert audit_log.details == %{"action" => "list", "id" => nil}
-      assert audit_log.ip == "127.0.0.1"
+      assert audit_log.ip == nil
     end
 
     test "with records" do
@@ -116,7 +116,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.ListTest do
       audit_log = LoggingTestLib.get_most_recent_audit_log_for_user(user.id)
       assert audit_log.action == "Anti-abuse record access"
       assert audit_log.details == %{"action" => "list", "id" => nil}
-      assert audit_log.ip == "127.0.0.1"
+      assert audit_log.ip == nil
     end
 
     test "search" do

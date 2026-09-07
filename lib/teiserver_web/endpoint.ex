@@ -10,7 +10,14 @@ defmodule TeiserverWeb.Endpoint do
   ]
 
   socket("/live", Phoenix.LiveView.Socket,
-    websocket: [connect_info: [:peer_data, session: @session_options]]
+    websocket: [
+      connect_info: [
+        :peer_data,
+        :x_headers,
+        :user_agent,
+        session: @session_options
+      ]
+    ]
   )
 
   # log: :debug reduces verbosity to avoid logging sensitive connection params
