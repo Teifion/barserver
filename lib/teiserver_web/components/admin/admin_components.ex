@@ -15,7 +15,7 @@ defmodule TeiserverWeb.Admin.AdminComponents do
 
   def sensitive_warning(assigns) do
     ip =
-      assigns.scope.ip
+      (assigns.scope.ip || {})
       |> Tuple.to_list()
       |> Enum.join(".")
 

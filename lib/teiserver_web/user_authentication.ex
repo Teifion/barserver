@@ -6,6 +6,7 @@ defmodule TeiserverWeb.UserAuthentication do
 
   alias Phoenix.Component
   alias Phoenix.LiveView
+  alias Phoenix.LiveView.Socket
   alias Teiserver.Account
   alias Teiserver.Account.AuthLib
   alias Teiserver.Account.Guardian
@@ -167,12 +168,10 @@ defmodule TeiserverWeb.UserAuthentication do
   @doc """
   Populates the scope for the user if one is assigned
   """
-  def fetch_current_scope_for_user(%{assigns: %{current_user: %User{} = user}} = socket) do
-    peer_data = LiveView.get_connect_info(socket, :peer_data)
-
+  def fetch_current_scope_for_user(%Socket{assigns: %{current_user: %User{} = user}} = socket) do
     scope = %Scope{
       user: user,
-      ip: peer_data.address
+      ip: fetch_ip_from_socket(socket)
     }
 
     Component.assign_new(socket, :scope, fn -> scope end)
@@ -180,4 +179,35 @@ defmodule TeiserverWeb.UserAuthentication do
 
   # Fallback for no user assigned
   def fetch_current_scope_for_user(socket), do: socket
+
+  # Ideally we'd grab it from this:
+  #
+  #   peer_data = LiveView.get_connect_info(socket, :peer_data)
+  #   peer_data.address
+  #
+  # but something in our setup is making that come through as {0, 0, 0, 0, 0, 65535, 32512, 1}
+  # in prod so we have to use the x_headers
+  defp fetch_ip_from_socket(%Socket{} = socket) do
+    ip_key =
+      socket
+      |> LiveView.get_connect_info(:x_headers)
+      |> List.keyfind("x-real-ip", 0)
+
+    case ip_key do
+      {_key, ip} ->
+        if String.contains?(ip, ":") do
+          ip
+          |> String.split(":")
+          |> List.to_tuple()
+        else
+          ip
+          |> String.split(".")
+          |> Enum.map(&String.to_integer/1)
+          |> List.to_tuple()
+        end
+
+      _other ->
+        nil
+    end
+  end
 end
