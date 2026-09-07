@@ -95,6 +95,12 @@
 /* Use the data attribute for dark mode  */
 @custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
 
+/* Adding some breakpoints for really wide screens */
+@theme {
+  --breakpoint-3xl: 140rem;
+  --breakpoint-4xl: 200rem;
+}
+
 /* Make LiveView wrapper divs transparent for layout */
 [data-phx-session],
 [data-phx-teleported-src] {
@@ -111,6 +117,10 @@
 
 .input[type="text"] {
   @apply text-gray-800 dark:text-gray-100;
+}
+
+.menu-grid {
+  @apply grid grid-flow-row-dense sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 2xl:grid-cols-10 3xl:grid-cols-12 4xl:grid-cols-16;
 }
 
 .menu-link {
