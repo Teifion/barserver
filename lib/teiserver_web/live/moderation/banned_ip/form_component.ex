@@ -1,4 +1,4 @@
-defmodule TeiserverWeb.Moderation.BannedIPLive.FormComponent do
+defmodule TeiserverWeb.ModerationLive.BannedIP.FormComponent do
   @moduledoc false
   alias Teiserver.Moderation
 
@@ -6,6 +6,10 @@ defmodule TeiserverWeb.Moderation.BannedIPLive.FormComponent do
 
   @impl LiveComponent
   def render(assigns) do
+    assigns =
+      assigns
+      |> assign(changed?: not Enum.empty?(assigns.form.source.changes))
+
     ~H"""
     <div>
       <.header>
@@ -22,7 +26,12 @@ defmodule TeiserverWeb.Moderation.BannedIPLive.FormComponent do
       >
         <.input field={@form[:cidr]} type="text" label="Cidr" />
         <:actions>
-          <.button phx-disable-with="Saving...">Save Banned ip</.button>
+          <.button
+            phx-disable-with="Saving..."
+            class={["float-right btn btn-primary", not @changed? && "btn-soft"]}
+          >
+            Save Banned ip
+          </.button>
         </:actions>
       </.simple_form>
     </div>

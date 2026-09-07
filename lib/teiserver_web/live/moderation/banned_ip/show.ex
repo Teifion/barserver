@@ -1,7 +1,7 @@
-defmodule TeiserverWeb.Moderation.BannedIPLive.Show do
+defmodule TeiserverWeb.ModerationLive.BannedIP.Show do
   @moduledoc false
   alias Teiserver.Moderation
-  alias TeiserverWeb.Moderation.BannedIPLive.FormComponent
+  alias TeiserverWeb.ModerationLive.BannedIP.FormComponent
 
   use TeiserverWeb, :live_view
 
@@ -18,6 +18,6 @@ defmodule TeiserverWeb.Moderation.BannedIPLive.Show do
      |> assign(:banned_ip, Moderation.get_banned_ip!(id))}
   end
 
-  defp page_title(:show), do: "Show banned ip"
-  defp page_title(:edit), do: "Edit banned ip"
+  defp page_title(:show), do: "Show Banned IP"
+  defp page_title(:edit), do: "Edit Banned IP"
 end

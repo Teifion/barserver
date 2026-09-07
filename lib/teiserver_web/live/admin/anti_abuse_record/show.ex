@@ -4,6 +4,7 @@ defmodule TeiserverWeb.Admin.AntiAbuseRecordLive.Show do
   alias Teiserver.Moderation.AntiAbuseRecord
   alias Teiserver.Moderation.AntiAbuseRecordQueries
   alias Teiserver.Repo
+  alias TeiserverWeb.Admin.AntiAbuseRecordComponents
 
   use TeiserverWeb, :live_view
 

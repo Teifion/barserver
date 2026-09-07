@@ -139,3 +139,27 @@
   z-index: 1000;
   text-align: center;
 }
+
+.section-menu-bar {
+  @apply bg-base-200 w-full rounded-box mb-2 p-0;
+}
+
+.section-menu-bar .menu li a {
+  height: 2.2rem;
+}
+
+.section-menu-bar .menu .active {
+  @apply text-neutral bg-primary/15 text-primary font-bold;
+}
+
+.section-menu-bar-inner_block {
+  @apply float-right m-2;
+}
+
+.btn-reset-form {
+  @apply btn btn-neutral;
+}
+
+.heading-subtitle {
+  @apply text-sm leading-6;
+}

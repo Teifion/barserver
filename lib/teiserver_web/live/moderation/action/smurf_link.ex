@@ -1,4 +1,4 @@
-defmodule TeiserverWeb.Moderation.ActionLive.SmurfLink do
+defmodule TeiserverWeb.ModerationLive.Action.SmurfLink do
   @moduledoc false
   alias Teiserver.Account
   alias Teiserver.Account.User

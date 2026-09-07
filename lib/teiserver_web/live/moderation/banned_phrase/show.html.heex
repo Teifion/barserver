@@ -1,12 +1,12 @@
 <.header>
-  Banned phrase {@banned_phrase.id}
+  Banned Phrase: {@banned_phrase.phrase}
   <:subtitle>This is a banned_phrase record from your database.</:subtitle>
   <:actions>
     <.link
       patch={~p"/moderation/banned_phrases/#{@banned_phrase}/show/edit"}
       phx-click={JS.push_focus()}
     >
-      <.button>Edit banned phrase</.button>
+      <.button>Edit Banned Phrase</.button>
     </.link>
   </:actions>
 </.header>
@@ -18,7 +18,7 @@
   <:item title="Severity">{@banned_phrase.severity}</:item>
 </.list>
 
-<.back navigate={~p"/moderation/banned_phrases"}>Back to banned_phrases</.back>
+<.back navigate={~p"/moderation/banned_phrases"}>Back to Banned Phrases</.back>
 
 <.modal
   :if={@live_action == :edit}

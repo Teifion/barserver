@@ -481,8 +481,6 @@ defmodule TeiserverWeb.Router do
   scope "/moderation", TeiserverWeb.Moderation, as: :moderation do
     pipe_through([:browser, :app_layout, :protected])
 
-    get("/", GeneralController, :index)
-
     get("/report/user/:id", ReportController, :user)
     resources("/report", ReportController, only: [:index, :show, :delete])
     post("/report/:id/respond", ReportController, :respond)
@@ -506,8 +504,18 @@ defmodule TeiserverWeb.Router do
     resources("/ban", BanController, only: [:index, :show, :new, :create, :edit, :update])
   end
 
-  scope "/moderation", TeiserverWeb.Moderation, as: :moderation do
+  scope "/moderation", TeiserverWeb.ModerationLive, as: :moderation do
     pipe_through([:live_browser, :app_layout, :protected, :tailwind])
+
+    live_session :moderation_menu,
+      layout: {TeiserverWeb.Layouts, :moderation_tw},
+      on_mount: [
+        {Teiserver.Account.DefaultsPlug, {:set, %{site_menu_active: "moderation"}}},
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Overwatch"}}
+      ] do
+      live "/", Menu, :menu
+    end
 
     live_session :actions,
       layout: {TeiserverWeb.Layouts, :moderation_tw},
@@ -516,42 +524,40 @@ defmodule TeiserverWeb.Router do
         {UserAuthentication, :ensure_authenticated},
         {UserAuthentication, {:authorise, "Moderator"}}
       ] do
-      live "/actions/smurf_link/:user_id", ActionLive.SmurfLink, :show
+      live "/actions/smurf_link/:user_id", Action.SmurfLink, :show
     end
 
     live_session :banned_ips,
-      layout: {TeiserverWeb.Layouts, :moderation},
+      layout: {TeiserverWeb.Layouts, :moderation_tw},
       on_mount: [
+        {Teiserver.Account.DefaultsPlug, {:set, %{site_menu_active: "moderation"}}},
         {UserAuthentication, :ensure_authenticated},
         {UserAuthentication, {:authorise, "Moderator"}}
       ] do
       # Banned ips
-      live "/banned_ips", BannedIPLive.Index, :index
-      live "/banned_ips/new", BannedIPLive.Index, :new
-      live "/banned_ips/:id/edit", BannedIPLive.Index, :edit
+      live "/banned_ips", BannedIP.List, :list
+      live "/banned_ips/new", BannedIP.List, :new
+      live "/banned_ips/:id/edit", BannedIP.List, :edit
 
-      live "/banned_ips/:id", BannedIPLive.Show, :show
-      live "/banned_ips/:id/show/edit", BannedIPLive.Show, :edit
+      live "/banned_ips/:id", BannedIP.Show, :show
+      live "/banned_ips/:id/show/edit", BannedIP.Show, :edit
     end
 
     live_session :banned_phrases,
-      layout: {TeiserverWeb.Layouts, :moderation},
+      layout: {TeiserverWeb.Layouts, :moderation_tw},
       on_mount: [
+        {Teiserver.Account.DefaultsPlug, {:set, %{site_menu_active: "moderation"}}},
         {UserAuthentication, :ensure_authenticated},
         {UserAuthentication, {:authorise, "Moderator"}}
       ] do
       # Banned phrases
-      live "/banned_phrases", BannedPhraseLive.Index, :index
-      live "/banned_phrases/new", BannedPhraseLive.Index, :new
-      live "/banned_phrases/:id/edit", BannedPhraseLive.Index, :edit
+      live "/banned_phrases", BannedPhrase.List, :list
+      live "/banned_phrases/new", BannedPhrase.List, :new
+      live "/banned_phrases/:id/edit", BannedPhrase.List, :edit
 
-      live "/banned_phrases/:id", BannedPhraseLive.Show, :show
-      live "/banned_phrases/:id/show/edit", BannedPhraseLive.Show, :edit
+      live "/banned_phrases/:id", BannedPhrase.Show, :show
+      live "/banned_phrases/:id/show/edit", BannedPhrase.Show, :edit
     end
-  end
-
-  scope "/moderation", TeiserverWeb.Moderation, as: :moderation_tw do
-    pipe_through([:browser, :app_layout, :protected, :tailwind])
 
     live_session :banned_domains,
       layout: {TeiserverWeb.Layouts, :moderation_tw},
@@ -560,10 +566,12 @@ defmodule TeiserverWeb.Router do
         {UserAuthentication, :ensure_authenticated},
         {UserAuthentication, {:authorise, "Moderator"}}
       ] do
-      live "/banned_domains", BannedDomainLive.Index, :index
-      live "/banned_domains/new", BannedDomainLive.Form, :new
-      live "/banned_domains/:id", BannedDomainLive.Show, :show
-      live "/banned_domains/:id/edit", BannedDomainLive.Form, :edit
+      live "/banned_domains", BannedDomain.List, :list
+      live "/banned_domains/new", BannedDomain.List, :new
+      live "/banned_domains/:id/edit", BannedDomain.List, :edit
+
+      live "/banned_domains/:id", BannedDomain.Show, :show
+      live "/banned_domains/:id/show/edit", BannedDomain.Show, :edit
     end
   end
 

@@ -1,7 +1,7 @@
-defmodule TeiserverWeb.Moderation.BannedDomainLive.Show do
+defmodule TeiserverWeb.ModerationLive.BannedPhrase.Show do
   @moduledoc false
   alias Teiserver.Moderation
-  alias TeiserverWeb.Moderation.BannedDomainLive.FormComponent
+  alias TeiserverWeb.ModerationLive.BannedPhrase.FormComponent
 
   use TeiserverWeb, :live_view
 
@@ -15,9 +15,9 @@ defmodule TeiserverWeb.Moderation.BannedDomainLive.Show do
     {:noreply,
      socket
      |> assign(:page_title, page_title(socket.assigns.live_action))
-     |> assign(:banned_domain, Moderation.get_banned_domain!(id))}
+     |> assign(:banned_phrase, Moderation.get_banned_phrase!(id))}
   end
 
-  defp page_title(:show), do: "Show banned domain"
-  defp page_title(:edit), do: "Edit banned domain"
+  defp page_title(:show), do: "Show Banned Phrase"
+  defp page_title(:edit), do: "Edit Banned Phrase"
 end

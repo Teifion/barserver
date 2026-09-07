@@ -1,4 +1,5 @@
-defmodule TeiserverWeb.Moderation.BannedPhraseLive.FormComponent do
+defmodule TeiserverWeb.ModerationLive.BannedPhrase.FormComponent do
+  @moduledoc false
   alias Teiserver.Moderation
   alias Teiserver.Moderation.BannedPhrase
 
@@ -6,11 +7,14 @@ defmodule TeiserverWeb.Moderation.BannedPhraseLive.FormComponent do
 
   @impl LiveComponent
   def render(assigns) do
+    assigns =
+      assigns
+      |> assign(changed?: not Enum.empty?(assigns.form.source.changes))
+
     ~H"""
     <div>
       <.header>
         {@title}
-        <:subtitle>Use this form to manage banned_phrase records in your database.</:subtitle>
       </.header>
 
       <.simple_form
@@ -20,18 +24,24 @@ defmodule TeiserverWeb.Moderation.BannedPhraseLive.FormComponent do
         phx-change="validate"
         phx-submit="save"
       >
-        <.input field={@form[:phrase]} type="text" label="Phrase" />
-        <.input field={@form[:score_threshold]} type="number" label="Score threshold" />
-        <.input field={@form[:type]} type="select" label="Type" options={BannedPhrase.types()} />
-        <.input
+        <.input_tw field={@form[:phrase]} type="text" label="Phrase" />
+        <.input_tw field={@form[:score_threshold]} type="number" label="Score threshold" />
+        <.input_tw field={@form[:type]} type="select" label="Type" options={BannedPhrase.types()} />
+        <.input_tw
           field={@form[:severity]}
           type="select"
           label="Severity"
           options={BannedPhrase.severities()}
         />
-        <:actions>
-          <.button phx-disable-with="Saving...">Save Banned phrase</.button>
-        </:actions>
+
+        <div class="my-2">
+          <.button
+            phx-disable-with="Saving..."
+            class={["float-right btn btn-primary", not @changed? && "btn-soft"]}
+          >
+            Save Banned phrase
+          </.button>
+        </div>
       </.simple_form>
     </div>
     """

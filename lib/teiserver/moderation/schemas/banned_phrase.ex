@@ -22,6 +22,8 @@ defmodule Teiserver.Moderation.BannedPhrase do
   @type severity :: :low | :medium | :high
   @type search_type :: :raw | :fuzzy | :regex
 
+  @type id :: non_neg_integer()
+
   typed_schema "banned_phrases" do
     field :phrase, :string
     field :score_threshold, :integer

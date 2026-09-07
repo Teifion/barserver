@@ -1,12 +1,12 @@
 <.header>
-  Banned domain
-  <:subtitle>This is a banned_domain record from your database.</:subtitle>
+  Banned Domain: {@banned_domain.domain}
+  <:subtitle>This is a Banned Domain.</:subtitle>
   <:actions>
     <.link
       navigate={~p"/moderation/banned_domains/#{@banned_domain}/edit?return_to=show"}
       phx-click={JS.push_focus()}
     >
-      <.button>Edit banned domain</.button>
+      <.button>Edit Banned domain</.button>
     </.link>
   </:actions>
 </.header>
@@ -15,7 +15,7 @@
   <:item title="Domain">{@banned_domain.domain}</:item>
 </.list>
 
-<.back navigate={~p"/moderation/banned_domains"}>Back to banned domains</.back>
+<.back navigate={~p"/moderation/banned_domains"}>Back to Banned Domains</.back>
 
 <.modal
   :if={@live_action == :edit}
