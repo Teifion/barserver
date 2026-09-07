@@ -4,6 +4,7 @@ defmodule Teiserver.Coordinator.ConsulCommands do
   alias ExULID.ULID
   alias Teiserver.Account
   alias Teiserver.Account.Auth
+  alias Teiserver.Account.RelationshipLib
   alias Teiserver.Account.User
   alias Teiserver.Battle
   alias Teiserver.Battle.BalanceLib
@@ -130,6 +131,32 @@ defmodule Teiserver.Coordinator.ConsulCommands do
       |> List.flatten()
       |> Enum.filter(fn v -> v != nil end)
 
+    # Moderator info regarding relationships
+    player_status =
+      if Auth.moderator?(senderid) do
+        blocks =
+          senderid
+          |> RelationshipLib.list_userids_blocked_by_userid()
+          |> Enum.map(&CacheUser.get_username/1)
+
+        avoids =
+          senderid
+          |> RelationshipLib.list_userids_avoided_by_userid()
+          |> Enum.map(&CacheUser.get_username/1)
+
+        ignores =
+          senderid
+          |> RelationshipLib.list_userids_ignored_by_userid()
+          |> Enum.map(&CacheUser.get_username/1)
+
+        [
+          "---- Moderator info ----",
+          "You are avoiding #{Enum.count(avoids)} players in this lobby: #{Enum.join(avoids, ", ")}",
+          "You are blocking #{Enum.count(blocks)} players in this lobby: #{Enum.join(blocks, ", ")}",
+          "You are ignoring #{Enum.count(ignores)} players in this lobby: #{Enum.join(ignores, ", ")}"
+        ]
+      end
+
     status_msg =
       [
         @splitter,
@@ -141,7 +168,8 @@ defmodule Teiserver.Coordinator.ConsulCommands do
         party_text,
         pos_str,
         "Join queue: #{queue_string} (size: #{queue_size})",
-        other_settings
+        other_settings,
+        player_status
       ]
       |> List.flatten()
       |> Enum.filter(fn s -> s != nil end)
@@ -408,7 +436,7 @@ defmodule Teiserver.Coordinator.ConsulCommands do
 
     if balance do
       admin_or_moderator_messages =
-        if Auth.admin?(senderid) or Auth.moderator?(senderid) do
+        if Auth.moderator?(senderid) do
           time_taken =
             cond do
               balance.time_taken < 1000 ->
@@ -606,9 +634,9 @@ defmodule Teiserver.Coordinator.ConsulCommands do
       |> String.downcase()
       |> String.trim()
 
-    is_admin_or_moderator = Auth.admin?(senderid) or Auth.moderator?(senderid)
+    is_moderator = Auth.moderator?(senderid)
 
-    allowed_choices = BalanceLib.get_allowed_algorithms(is_admin_or_moderator)
+    allowed_choices = BalanceLib.get_allowed_algorithms(is_moderator)
 
     if Enum.member?(allowed_choices, remaining) do
       ChatLib.say(
