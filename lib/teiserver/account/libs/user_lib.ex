@@ -270,7 +270,7 @@ defmodule Teiserver.Account.UserLib do
       Repo.transact(fn ->
         with %Changeset{valid?: true} = changeset <- User.changeset(user, attrs, :email),
              {:ok, %User{} = user} <- Repo.update(changeset),
-             {:ok, %{}} <- EmailHelper.email_changed(user) do
+             {:ok, _any} <- EmailHelper.email_changed(user) do
           Logging.add_audit_log(user.id, ip_address, "email_change_success", %{})
 
           {:ok, user}
