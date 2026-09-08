@@ -158,7 +158,7 @@ defmodule TeiserverWeb.Admin.MenuLive do
       </.menu_page_link>
     </div>
 
-    <div class="grid grid-flow-row-dense grid-cols-8">
+    <div class="menu-grid">
       <.menu_page_link icon={StylingHelper.icon(:back)} url={~p"/"} size={:small}>
         Back
       </.menu_page_link>
