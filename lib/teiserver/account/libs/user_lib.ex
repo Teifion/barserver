@@ -604,6 +604,9 @@ defmodule Teiserver.Account.UserLib do
       Account.get_user_totp_status(user.id) == :active ->
         {:requires_mfa, user}
 
+      gdpr_forget_in_progress?(user) ->
+        {:gdpr_forget_is_set, user}
+
       true ->
         :ok
     end
@@ -682,5 +685,14 @@ defmodule Teiserver.Account.UserLib do
       {:ok, :ok} -> :ok
       error -> error
     end
+  end
+
+  @doc """
+  If a GDPR forget is in progress then we can't let the user login via the game client
+  and they must instead login via the website to explicitly cancel the forget process
+  or have the process cancelled by a Moderator.
+  """
+  def gdpr_forget_in_progress?(%User{gdpr_forget_after: gdpr_forget_after}) do
+    not is_nil(gdpr_forget_after)
   end
 end
