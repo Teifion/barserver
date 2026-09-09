@@ -38,6 +38,7 @@ defmodule Teiserver.Account.User do
     field :last_played, :utc_datetime
     field :last_logout, :utc_datetime
     field :email_last_changed_at, :utc_datetime
+    field :gdpr_forget_after, :utc_datetime
 
     field :discord_id, :integer
     field :discord_dm_channel_id, :integer
@@ -314,6 +315,14 @@ defmodule Teiserver.Account.User do
 
   def smurf_changeset(%User{} = user, attrs) do
     cast(user, attrs, [:smurf_of_id])
+  end
+
+  def clear_gdpr_forget_changeset(%User{} = user) do
+    cast(user, %{gdpr_forget_after: nil}, [:gdpr_forget_after])
+  end
+
+  def set_gdpr_forget_changeset(%User{} = user, attrs) do
+    cast(user, attrs, [:gdpr_forget_after])
   end
 
   defp change_plain_password(user, attrs) do

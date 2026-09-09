@@ -383,6 +383,24 @@ defmodule Teiserver.Account.UserLib do
     |> UserCacheLib.decache_user_on_ok()
   end
 
+  def set_gdpr_forget(%User{} = user, timestamp) do
+    user
+    |> User.set_gdpr_forget_changeset(%{gdpr_forget_after: timestamp})
+    |> Repo.update()
+    |> broadcast_update_user()
+    |> cache_put_on_ok(:users_by_id)
+    |> UserCacheLib.decache_user_on_ok()
+  end
+
+  def clear_gdpr_forget(%User{} = user) do
+    user
+    |> User.clear_gdpr_forget_changeset()
+    |> Repo.update()
+    |> broadcast_update_user()
+    |> cache_put_on_ok(:users_by_id)
+    |> UserCacheLib.decache_user_on_ok()
+  end
+
   @doc """
   Deletes a user.
 
