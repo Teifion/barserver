@@ -383,6 +383,23 @@ defmodule Teiserver.Account.UserLibTest do
     end
   end
 
+  describe "changesets" do
+    test "clear_gdpr_forget_changeset and set_gdpr_forget_changeset" do
+      user = AccountFixtures.user_fixture()
+      now = DateTime.utc_now(:second)
+
+      assert is_nil(user.gdpr_forget_after)
+
+      # First we set it
+      {:ok, user} = UserLib.set_gdpr_forget(user, now)
+      assert user.gdpr_forget_after == now
+
+      # Now un-set it
+      {:ok, user} = UserLib.clear_gdpr_forget(user)
+      assert is_nil(user.gdpr_forget_after)
+    end
+  end
+
   defp user_stat_data_fixtures(_state) do
     %{id: user1} = AccountFixtures.user_fixture()
     %{id: user2} = AccountFixtures.user_fixture()
