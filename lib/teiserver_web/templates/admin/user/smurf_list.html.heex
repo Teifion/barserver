@@ -254,11 +254,11 @@ is_moderator = allow?(@conn, "Moderator") %>
                       <td>
                         <a
                           href={
-                            ~p"/teiserver/reports/show/time_compare?report[account_user1]=%23#{@user.id}&report[account_user2]=%23#{user.id}"
+                            ~p"/moderation/tools/time_compare?user1=#{@user.id}&user2=#{user.id}"
                           }
                           class="btn btn-secondary btn-sm"
                         >
-                          Compare
+                          <Fontawesome.icon icon="fa-code-compare" style="regular" /> Compare
                         </a>
                       </td>
 

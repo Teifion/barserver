@@ -56,16 +56,6 @@
       Relationships
     </.menu_card>
   <% end %>
-
-  <%= if allow?(@current_user, Teiserver.Account.TimeCompareReport.permissions()) do %>
-    <.menu_card
-      size={:small}
-      icon={Teiserver.Account.TimeCompareReport.icon()}
-      url={~p"/teiserver/reports/show/time_compare"}
-    >
-      Time compare
-    </.menu_card>
-  <% end %>
 </div>
 
 <div class="row mt-2">
