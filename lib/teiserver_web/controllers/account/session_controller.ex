@@ -7,9 +7,12 @@ defmodule TeiserverWeb.Account.SessionController do
   alias Teiserver.Config
   alias Teiserver.EmailHelper
   alias Teiserver.Helper.DateHelper
+  alias Teiserver.Logging.AuditLog
   alias Teiserver.Logging.Helpers, as: LoggingHelpers
   alias Teiserver.Logging.LoggingPlug
+
   use TeiserverWeb, :controller
+
   require Logger
 
   @spec new(Conn.t(), map()) :: Conn.t()
@@ -48,6 +51,11 @@ defmodule TeiserverWeb.Account.SessionController do
         conn
         |> put_session(:pending_mfa_user_id, user.id)
         |> redirect(to: ~p"/otp")
+
+      {:gdpr_forget_is_set, user} ->
+        conn
+        |> put_session(:gdpr_forget_user_id, user.id)
+        |> redirect(to: ~p"/gdpr_forget")
 
       {:error, reason} ->
         login_reply({:error, reason}, conn)
@@ -379,6 +387,59 @@ defmodule TeiserverWeb.Account.SessionController do
               value: value
             )
         end
+    end
+  end
+
+  @spec gdpr_forget_warning(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def gdpr_forget_warning(conn, _params) do
+    user_id = get_session(conn, :gdpr_forget_user_id)
+    %User{} = user = Account.get_user!(user_id)
+
+    # Need to assign it for the audit log to attach to the correct user though
+    # they are not logged in at this point
+    conn =
+      conn
+      |> assign(:current_user, user)
+
+    if UserLib.gdpr_forget_in_progress?(user) do
+      %AuditLog{} = LoggingHelpers.add_audit_log(conn, "GDPR forget login warning", %{})
+      website_url = Application.get_env(:teiserver, Teiserver)[:main_website]
+
+      conn
+      |> assign(:user, user)
+      |> assign(:website_url, website_url)
+      |> render("gdpr_forget_warning.html")
+    else
+      conn
+      |> redirect(to: ~p"/login")
+    end
+  end
+
+  @spec gdpr_forget_cancel_confirm(Plug.Conn.t(), map()) :: Plug.Conn.t()
+  def gdpr_forget_cancel_confirm(conn, _params) do
+    user_id = get_session(conn, :gdpr_forget_user_id)
+    %User{} = user = Account.get_user(user_id)
+
+    # Need to assign it for the audit log to attach to the correct user though
+    # they are not logged in at this point
+    conn =
+      conn
+      |> assign(:current_user, user)
+
+    with {:ok, %User{gdpr_forget_after: nil}} <- UserLib.clear_gdpr_forget(user),
+         %AuditLog{} <- LoggingHelpers.add_audit_log(conn, "Self-cleared GDPR forget", %{}) do
+      conn
+      |> put_flash(:success, "GDPR forget process cancelled, you can login normally again.")
+      |> redirect(to: ~p"/login")
+    else
+      error_result ->
+        Logger.error(
+          "Unable to execute gdpr_forget_cancel_confirm page, got: #{inspect(error_result)}"
+        )
+
+        conn
+        |> put_flash(:error, "Unable to cancel GDPR forget process. Please raise a ticket.")
+        |> redirect(to: ~p"/gdpr_forget")
     end
   end
 end

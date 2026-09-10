@@ -86,7 +86,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :general_index,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/", HomeLive.Index, :index
     end
@@ -99,7 +99,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :microblog_root,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :mount_current_user}
+        {UserAuthentication, :mount_current_user}
       ] do
       live "/", BlogLive.Index, :index
       live "/all", BlogLive.Index, :all
@@ -112,15 +112,15 @@ defmodule TeiserverWeb.Router do
 
     live_session :microblog_user,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/preferences", BlogLive.Preferences, :index
     end
 
     live_session :microblog_admin,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated},
-        {Teiserver.Account.AuthPlug, {:authorise, "Contributor"}}
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Contributor"}}
       ] do
       live "/admin/posts", Admin.PostLive.Index, :index
       live "/admin/posts/:id", Admin.PostLive.Show, :show
@@ -135,6 +135,13 @@ defmodule TeiserverWeb.Router do
   scope "/microblog", TeiserverWeb.Microblog do
     get "/rss", RssController, :index
     get "/rss/html", RssController, :html_mode
+  end
+
+  scope "/", TeiserverWeb.Account do
+    pipe_through([:browser, :nomenu_layout, :tailwind])
+
+    get("/gdpr_forget", SessionController, :gdpr_forget_warning)
+    post("/gdpr_forget", SessionController, :gdpr_forget_cancel_confirm)
   end
 
   scope "/", TeiserverWeb.Account, as: :account do
@@ -230,7 +237,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :relationships,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/relationship", RelationshipLive.Index, :friend
       live "/relationship/friend", RelationshipLive.Index, :friend
@@ -242,7 +249,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :account_settings,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/settings", SettingsLive.Index, :index
       live "/settings/:key", SettingsLive.Index, :selected
@@ -254,7 +261,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :profiles,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :mount_current_user}
+        {UserAuthentication, :mount_current_user}
       ] do
       live "/", ProfileLive.Self, :index
       live "/name/:username", ProfileLive.Username, :index
@@ -268,8 +275,8 @@ defmodule TeiserverWeb.Router do
 
     live_session :authed_profiles,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :mount_current_user},
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :mount_current_user},
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/:userid/appearance", ProfileLive.Appearance, :appearance
       live "/:userid/relationships", ProfileLive.Relationships, :relationships
@@ -282,7 +289,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :maps,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :mount_current_user}
+        {UserAuthentication, :mount_current_user}
       ] do
       live "/", Index, :index
     end
@@ -322,7 +329,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :board_view,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/ratings", MatchLive.Ratings, :index
       live "/ratings/:rating_type", MatchLive.Ratings, :index
@@ -471,7 +478,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :report_user,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :mount_current_user}
+        {UserAuthentication, :mount_current_user}
       ] do
       live "/report_user", ReportUserLive.Index, :index
       live "/report_user/:id", ReportUserLive.Index, :selected
@@ -504,7 +511,7 @@ defmodule TeiserverWeb.Router do
     resources("/ban", BanController, only: [:index, :show, :new, :create, :edit, :update])
   end
 
-  scope "/moderation", TeiserverWeb.ModerationLive, as: :moderation do
+  scope "/moderation", TeiserverWeb.ModerationLive do
     pipe_through([:live_browser, :app_layout, :protected, :tailwind])
 
     live_session :moderation_menu,
@@ -606,7 +613,7 @@ defmodule TeiserverWeb.Router do
 
     live_session :chat_liveview,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated}
+        {UserAuthentication, :ensure_authenticated}
       ] do
       live "/", ChatLive.Index, :index
       live "/room", ChatLive.Room, :index
@@ -641,16 +648,16 @@ defmodule TeiserverWeb.Router do
 
     live_session :admin_chat_liveview,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated},
-        {Teiserver.Account.AuthPlug, {:authorise, "Reviewer"}}
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Reviewer"}}
       ] do
       live "/chat", ChatLive.Index, :index
     end
 
     live_session :admin_matchmaking_liveview,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated},
-        {Teiserver.Account.AuthPlug, {:authorise, "Admin"}}
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Admin"}}
       ] do
       live "/matchmaking", MatchmakingLive.Index, :index
     end
@@ -733,8 +740,8 @@ defmodule TeiserverWeb.Router do
 
     live_session :admin_bot_liveview,
       on_mount: [
-        {Teiserver.Account.AuthPlug, :ensure_authenticated},
-        {Teiserver.Account.AuthPlug, {:authorise, "Admin"}}
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Admin"}}
       ] do
       live "/bot", BotLive.Index, :index
       live "/bot/new", BotLive.Index, :new

@@ -824,15 +824,6 @@ defmodule Teiserver.CacheUser do
         {:error, "No user found for '#{username}'"}
 
       user ->
-        # # If they're a smurf, log them in as the smurf!
-        # {user, username} =
-        #   if user.smurf_of_id != nil do
-        #     origin_user = deprecated_get_user_by_id(user.smurf_of_id)
-
-        #     {origin_user, origin_user.name}
-        #   else
-        #     {user, user.name}
-        #   end
         db_user = Account.get_user(user.id)
 
         cond do
@@ -894,6 +885,13 @@ defmodule Teiserver.CacheUser do
             })
 
             {:error, "Unverified", user.id}
+
+          # This is also defined in UserLib but that imports CacheUser so we
+          # repeat it here as we don't want a circular dependency and the plan is to remove
+          # this module later.
+          not is_nil(db_user.gdpr_forget_after) ->
+            host = Application.get_env(:teiserver, TeiserverWeb.Endpoint)[:url][:host]
+            {:error, "You must login via the website to activate this account - #{host}/login"}
 
           true ->
             if Client.get_client_by_id(user.id) != nil do
@@ -977,6 +975,13 @@ defmodule Teiserver.CacheUser do
         :telemetry.execute([:tachyon, :login, :error], %{count: 1}, %{reason: :not_verified})
 
         {:error, "Account is not verified"}
+
+      # This is also defined in UserLib but that imports CacheUser so we
+      # repeat it here as we don't want a circular dependency and the plan is to remove
+      # this module later.
+      not is_nil(db_user.gdpr_forget_after) ->
+        host = Application.get_env(:teiserver, TeiserverWeb.Endpoint)[:url][:host]
+        {:error, "You must login via the website to activate this account - #{host}/login"}
 
       true ->
         # TODO: copy/paste the capacity restriction and queuing from try_md5_login later

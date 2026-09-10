@@ -59,16 +59,39 @@ defmodule TeiserverWeb.UserAuthentication do
 
   def on_mount(:ensure_authenticated, _params, session, socket) do
     socket = mount_current_user(socket, session)
+    user = socket.assigns[:current_user]
 
-    if socket.assigns.current_user do
-      {:cont, socket}
-    else
-      socket =
-        socket
-        |> LiveView.put_flash(:error, "You must log in to access this page.")
-        |> LiveView.redirect(to: ~p"/login")
+    cond do
+      # Not logged in
+      is_nil(user) ->
+        socket =
+          socket
+          |> LiveView.put_flash(:error, "You must log in to access this page.")
+          |> LiveView.redirect(to: ~p"/login")
 
-      {:halt, socket}
+        {:halt, socket}
+
+      # GDPR forget is set, we need to log them out to force them
+      # into the cancel-flow option
+      not is_nil(user.gdpr_forget_after) ->
+        socket =
+          socket
+          |> LiveView.redirect(to: ~p"/logout")
+
+        {:halt, socket}
+
+      # Banned
+      Account.restricted?(user, ["Login"]) ->
+        socket =
+          socket
+          |> LiveView.put_flash(:error, "Your account is banned and cannot login.")
+          |> LiveView.redirect(to: ~p"/")
+
+        {:halt, socket}
+
+      # All good, lets carry on
+      true ->
+        {:cont, socket}
     end
   end
 
@@ -118,12 +141,16 @@ defmodule TeiserverWeb.UserAuthentication do
           nil
       end
 
-    Component.assign_new(socket, :current_user, fn -> user end)
+    socket
+    |> Component.assign_new(:current_user, fn -> user end)
+    |> Component.assign_new(:tz, fn -> nil end)
     |> fetch_current_scope_for_user()
   end
 
   defp mount_current_user(socket, _session) do
-    Component.assign_new(socket, :current_user, fn -> nil end)
+    socket
+    |> Component.assign_new(:current_user, fn -> nil end)
+    |> Component.assign_new(:tz, fn -> nil end)
   end
 
   @doc """
