@@ -194,6 +194,7 @@ defmodule Teiserver.Helper.DateHelper do
   """
   def parse_ymd(nil), do: nil
   def parse_ymd(""), do: nil
+  def parse_ymd(%Date{} = date), do: date
 
   def parse_ymd(s) do
     [year, month, day] = String.split(s, "-")

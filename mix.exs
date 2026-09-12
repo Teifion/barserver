@@ -122,6 +122,7 @@ defmodule Teiserver.MixProject do
       # Provides a DSL on top of Ecto.Schema to define schemas with typespecs without all the boilerplate code.
       {:typed_ecto_schema, "~> 0.4.3", runtime: false},
       {:net_address, "~> 0.3.1"},
+      {:live_charts, "~> 0.5.0"},
 
       # Teiserver libs
       {:openskill,

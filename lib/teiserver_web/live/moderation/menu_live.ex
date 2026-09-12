@@ -62,6 +62,16 @@ defmodule TeiserverWeb.ModerationLive.Menu do
     </div>
 
     <div class="menu-grid">
+      <.menu_page_link
+        :if={allow?(@scope, "Moderator")}
+        icon="fa-code-compare"
+        url={~p"/moderation/tools/time_compare"}
+      >
+        Time compare
+      </.menu_page_link>
+    </div>
+
+    <div class="menu-grid">
       <.menu_page_link icon={StylingHelper.icon(:back)} url={~p"/"} size={:small}>
         Back
       </.menu_page_link>

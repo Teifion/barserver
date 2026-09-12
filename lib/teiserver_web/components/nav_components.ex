@@ -496,6 +496,7 @@ defmodule TeiserverWeb.NavComponents do
   attr :icon, :string, default: nil
   attr :url, :string, required: true
   attr :active, :boolean, default: false
+  attr :class, :string, default: nil
   slot :inner_block, required: true
 
   def section_menu_link(assigns) do
@@ -505,7 +506,7 @@ defmodule TeiserverWeb.NavComponents do
 
     ~H"""
     <li>
-      <a href={@url} class={["tab", @active_class]}>
+      <a href={@url} class={["tab", @class, @active_class]}>
         <Fontawesome.icon :if={@icon} icon={@icon} style="solid" /> &nbsp; {render_slot(@inner_block)}
       </a>
     </li>

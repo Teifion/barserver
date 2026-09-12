@@ -24,9 +24,6 @@ defmodule TeiserverWeb.Report.ReportController do
         "time_spent" ->
           Teiserver.Account.TimeSpentReport
 
-        "time_compare" ->
-          Teiserver.Account.TimeCompareReport
-
         "active" ->
           Teiserver.Account.ActiveReport
 

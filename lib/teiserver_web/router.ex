@@ -596,6 +596,16 @@ defmodule TeiserverWeb.Router do
       live "/banned_domains/:id", BannedDomain.Show, :show
       live "/banned_domains/:id/show/edit", BannedDomain.Show, :edit
     end
+
+    live_session :moderation_tools,
+      layout: {TeiserverWeb.Layouts, :moderation_tw},
+      on_mount: [
+        {Teiserver.Account.DefaultsPlug, {:set, %{site_menu_active: "moderation"}}},
+        {UserAuthentication, :ensure_authenticated},
+        {UserAuthentication, {:authorise, "Moderator"}}
+      ] do
+      live "/tools/time_compare", Tools.TimeCompare, :show
+    end
   end
 
   scope "/admin", TeiserverWeb.Admin, as: :admin do
