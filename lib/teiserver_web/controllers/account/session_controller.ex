@@ -15,32 +15,8 @@ defmodule TeiserverWeb.Account.SessionController do
 
   require Logger
 
-  @spec new(Conn.t(), map()) :: Conn.t()
-  def new(conn, _params) do
-    changeset = Account.change_user(%User{})
-    maybe_user = GuardianPlug.current_resource(conn)
-
-    if maybe_user do
-      if conn.assigns[:current_user] do
-        redirect(conn, to: "/")
-      else
-        conn
-        |> GuardianPlug.sign_in(maybe_user)
-        |> GuardianPlug.remember_me(maybe_user)
-        |> redirect(to: "/")
-      end
-    else
-      conn
-      |> GuardianPlug.sign_out(clear_remember_me: true)
-      |> assign(:changeset, changeset)
-      |> assign(:action, ~p"/login")
-      |> assign(:can_register?, Account.can_register_with_web?())
-      |> render("new.html")
-    end
-  end
-
-  @spec login(Conn.t(), map()) :: Conn.t()
-  def login(conn, %{"user" => %{"email" => email, "password" => password}}) do
+  @spec create(Conn.t(), map()) :: Conn.t()
+  def create(conn, %{"user" => %{"email" => email, "password" => password}}) do
     email = String.trim(email)
 
     case UserLib.authenticate_user(conn, email, password) do
@@ -68,6 +44,7 @@ defmodule TeiserverWeb.Account.SessionController do
 
     conn
     |> assign(:user, user)
+    |> put_layout(:public_tw)
     |> render("totp.html")
   end
 
@@ -100,6 +77,7 @@ defmodule TeiserverWeb.Account.SessionController do
           end
 
         conn
+        |> put_layout(:public_tw)
         |> put_flash(:warning, flash_message)
         |> assign(:user, user)
         |> render("totp.html")
@@ -135,6 +113,7 @@ defmodule TeiserverWeb.Account.SessionController do
           end
 
         conn
+        |> put_layout(:public_tw)
         |> put_flash(:warning, flash_message)
         |> assign(:user, user)
         |> render("totp.html")
@@ -235,9 +214,8 @@ defmodule TeiserverWeb.Account.SessionController do
   defp login_reply({:error, reason}, conn) do
     conn
     |> GuardianPlug.sign_out(clear_remember_me: true)
-    |> put_flash(:danger, to_string(reason))
-    |> assign(:result, to_string(reason))
-    |> render("result.html")
+    |> put_flash(:error, to_string(reason))
+    |> redirect(to: ~p"/login")
   end
 
   @spec forgot_password(Conn.t(), map()) :: Conn.t()
@@ -274,8 +252,7 @@ defmodule TeiserverWeb.Account.SessionController do
       not Enum.empty?(existing_resets) ->
         conn
         |> put_flash(:success, "Existing password reset already sent out")
-        |> assign(:result, "Existing password reset already sent out")
-        |> render("result.html")
+        |> redirect(to: ~p"/login")
 
       user.id == -1 ->
         conn
@@ -308,21 +285,18 @@ defmodule TeiserverWeb.Account.SessionController do
     cond do
       code == nil ->
         conn
-        |> put_flash(:danger, "Unable to find link")
-        |> assign(:result, "Unable to find link")
-        |> render("result.html")
+        |> put_flash(:error, "Unable to find link")
+        |> redirect(to: ~p"/login")
 
       code.purpose != "reset_password" ->
         conn
-        |> put_flash(:danger, "Link cannot be found")
-        |> assign(:result, "Link cannot be found")
-        |> render("result.html")
+        |> put_flash(:error, "Link cannot be found")
+        |> redirect(to: ~p"/login")
 
       DateTime.compare(DateTime.utc_now(), code.expires) == :gt ->
         conn
-        |> put_flash(:danger, "Link has expired")
-        |> assign(:result, "Link has expired")
-        |> render("result.html")
+        |> put_flash(:error, "Link has expired")
+        |> redirect(to: ~p"/login")
 
       true ->
         changeset = Account.change_user(code.user)

@@ -144,14 +144,28 @@ defmodule TeiserverWeb.Router do
     post("/gdpr_forget", SessionController, :gdpr_forget_cancel_confirm)
   end
 
-  scope "/", TeiserverWeb.Account, as: :account do
-    pipe_through([:browser, :nomenu_layout])
+  scope "/", TeiserverWeb do
+    pipe_through([:live_browser, :app_layout, :tailwind])
 
-    get("/login", SessionController, :new)
-    post("/login", SessionController, :login)
-    get("/otp", SessionController, :otp)
-    post("/otp", SessionController, :verify_totp)
+    live_session :redirect_if_user_is_authenticated,
+      layout: {TeiserverWeb.Layouts, :public_tw},
+      on_mount: [
+        {UserAuthentication, :redirect_if_user_is_authenticated}
+      ] do
+      live "/login", Account.SessionLive.UserLogin, :new
+    end
+
+    post "/login", Account.SessionController, :create
+
+    get("/otp", Account.SessionController, :otp)
+    post("/otp", Account.SessionController, :verify_totp)
+  end
+
+  scope "/", TeiserverWeb.Account, as: :account do
+    pipe_through([:browser, :nomenu_layout, :tailwind])
+
     post("/refresh_otp", SessionController, :refresh_totp)
+
     get("/logout", SessionController, :logout)
     post("/logout", SessionController, :logout)
     delete("/logout", SessionController, :logout)
