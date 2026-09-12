@@ -115,7 +115,6 @@
   {"lib/teiserver/telemetry/libs/simple_lobby_event_type_lib.ex", :invalid_contract},
   {"lib/teiserver/telemetry/libs/simple_match_event_type_lib.ex", :invalid_contract},
   {"lib/teiserver/telemetry/libs/simple_server_event_type_lib.ex", :invalid_contract},
-  {"lib/teiserver_web/controllers/account/session_controller.ex", :pattern_match},
   {"lib/teiserver_web/controllers/admin/discord_channel_controller.ex", :pattern_match},
   {"lib/teiserver_web/controllers/admin/lobby_controller.ex", :no_return},
   {"lib/teiserver_web/controllers/admin/match_controller.ex", :no_return},
@@ -162,5 +161,6 @@
   {"test/support/fixtures/moderation_fixtures.ex"},
   {"lib/teiserver/moderation.ex"},
   {"lib/teiserver_web/live/battles/match/show.ex"},
+  {"lib/teiserver_web/controllers/account/session_controller.ex"},
   {"lib/teiserver/moderation/tasks/create_anti_abuse_record_task.ex"}
 ]
