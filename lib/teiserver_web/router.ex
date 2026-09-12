@@ -81,14 +81,16 @@ defmodule TeiserverWeb.Router do
     plug(TeiserverWeb.Plugs.OAuthAuthenticatedPlug)
   end
 
-  scope "/", TeiserverWeb.General do
-    pipe_through([:live_browser, :nomenu_layout, :protected])
+  scope "/", TeiserverWeb.GeneralLive do
+    pipe_through([:live_browser, :app_layout, :protected, :tailwind])
 
     live_session :general_index,
+      layout: {TeiserverWeb.Layouts, :public_tw},
       on_mount: [
+        {Teiserver.Account.DefaultsPlug, {:set, %{site_menu_active: "home"}}},
         {UserAuthentication, :ensure_authenticated}
       ] do
-      live "/", HomeLive.Index, :index
+      live "/", Menu, :index
     end
   end
 
