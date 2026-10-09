@@ -664,6 +664,7 @@ defmodule TeiserverWeb.Router do
       live "/tools/gdpr_restore", Tools.GDPRRestoreWarning
       live "/tools/gdpr_restore/perform", Tools.GDPRRestorePerform
       live "/tools/gdpr_restore/success/:user_id", Tools.GDPRRestoreSuccess
+      live "/tools/user_notes_review", Tools.UserNotesReviewTool, :show
     end
   end
 

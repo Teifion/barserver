@@ -114,6 +114,14 @@ defmodule TeiserverWeb.ModerationLive.Menu do
       >
         GDPR restore
       </.menu_page_link>
+
+      <.menu_page_link
+        :if={allow?(@scope, "Moderator")}
+        icon="file-lines"
+        url={~p"/moderation/tools/user_notes_review"}
+      >
+        User notes review
+      </.menu_page_link>
     </div>
 
     <div class="menu-grid">
